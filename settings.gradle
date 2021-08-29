@@ -1,0 +1,4 @@
+rootProject.name = "CatInject"
+include ':plugin'
+include ':lib'
+
