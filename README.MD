@@ -4,7 +4,7 @@
 
 ## 导入
 
-mavenCentral 版本: [![Maven Central](https://img.shields.io/maven-central/v/io.github.zsqw123/cat-inject-lib)](https://search.maven.org/artifact/io.github.zsqw123/cat-inject-lib)
+mavenCentral 版本: [![Maven Central](https://img.shields.io/maven-central/v/io.github.zsqw123/cat-inject-lib)](https://search.maven.org/artifact/io.github.zsqw123/cat-inject-lib)  
 mavenCentral 发布需要一定时间, 如果发现最新版本不能用, 建议稍等4小时左右
 
 1. 在项目根 `build.gradle`:

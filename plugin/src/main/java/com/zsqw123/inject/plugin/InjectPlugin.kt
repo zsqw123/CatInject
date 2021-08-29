@@ -10,7 +10,7 @@ class InjectPlugin : Plugin<Project> {
         val androidAppExtension = target.extensions.findByType(AppExtension::class.java)
         val androidLibExtension = target.extensions.findByType(LibraryExtension::class.java)
         if (androidAppExtension != null || androidLibExtension != null) {
-            val injectTransform = InjectTransform(target)
+            val injectTransform = InjectTransform()
             androidAppExtension?.registerTransform(injectTransform)
             androidLibExtension?.registerTransform(injectTransform)
         }

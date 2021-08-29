@@ -1,33 +1,36 @@
 package com.zsqw123.inject.plugin
 
 import com.zsqw123.inject.CatInjects
-import org.gradle.api.Project
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Type
 import java.io.File
 import java.util.jar.JarFile
 
-class InjectTransform(project: Project) : BaseTransform() {
+class InjectTransform : BaseTransform() {
     private val injectInterfaceInternalNames = HashSet<String>()
     private val injectImpls = ArrayList<InjectImpl>()
     private lateinit var injectsJarOutputFile: File
 
-    override fun processDirectory(inputDirFile: File, outputDirFile: File) {
-        scanClasses(outputDirFile)
+    override fun processDirectory(outputDirFile: File) {
+        val needClassesSequence = outputDirFile.walkTopDown().filter { it.name.isNeededClassName() }.map { it.readBytes() }
+        scanInjectAnnotation(needClassesSequence)
+        scanInjectImpls(needClassesSequence)
     }
 
-    override fun processJar(inputJarFile: File, outputJarFile: File) {
+    override fun processJar(outputJarFile: File) {
         if (!::injectsJarOutputFile.isInitialized) {
             if (JarFile(outputJarFile).hasEntry(Type.getInternalName(CatInjects::class.java) + ".class")) {
-                pluginLog("find jar include Injects:${outputJarFile.name}")
+                pluginLog("find jar include CatInjects:${outputJarFile.name}")
                 injectsJarOutputFile = outputJarFile
                 return
             }
         }
-        val unzipPath = outputJarFile.unzipTo()
-        scanClasses(unzipPath)
-        unzipPath.deleteRecursively()
+        val jarFile = JarFile(outputJarFile)
+        val bytesSequence = jarFile.entries().asSequence()
+            .filter { it.name.isNeededClassName() }
+            .map { jarFile.getInputStream(it).readBytes() }
+        scanInjectAnnotation(bytesSequence)
     }
 
     private fun scanInjectAnnotation(bytesSequence: Sequence<ByteArray>) {
@@ -51,12 +54,6 @@ class InjectTransform(project: Project) : BaseTransform() {
                 injectImpls.add(InjectImpl(className, findedInterfaceClassName))
             }
         }
-    }
-
-    private fun scanClasses(classesDir: File) {
-        val needClassesSequence = classesDir.walkTopDown().filter { it.name.isNeededClassName() }.map { it.readBytes() }
-        scanInjectAnnotation(needClassesSequence)
-        scanInjectImpls(needClassesSequence)
     }
 
     private fun modifyInjects(injectImplMap: InjectImplsMap) {

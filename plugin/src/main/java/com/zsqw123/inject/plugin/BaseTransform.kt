@@ -37,7 +37,7 @@ open class BaseTransform : Transform() {
                 }
                 if (!isIncremental || jarInput.status != Status.REMOVED) {
                     //处理jar
-                    processJar(jarInput.file, outputJarFile)
+                    processJar(outputJarFile)
                 }
             }
             input.directoryInputs.forEach { dirInput ->
@@ -47,13 +47,13 @@ open class BaseTransform : Transform() {
                 )
                 dirInput.file.copyRecursively(outputDir, true)
                 //处理本地class
-                processDirectory(dirInput.file, outputDir)
+                processDirectory(outputDir)
             }
         }
         onTransformed()
     }
 
-    protected open fun processJar(inputJarFile: File, outputJarFile: File) = Unit
-    protected open fun processDirectory(inputDirFile: File, outputDirFile: File) = Unit
+    protected open fun processJar(outputJarFile: File) = Unit
+    protected open fun processDirectory(outputDirFile: File) = Unit
     protected open fun onTransformed() = Unit
 }
