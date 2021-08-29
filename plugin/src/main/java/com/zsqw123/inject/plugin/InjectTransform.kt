@@ -26,11 +26,12 @@ class InjectTransform : BaseTransform() {
                 return
             }
         }
-        val jarFile = JarFile(outputJarFile)
-        val bytesSequence = jarFile.entries().asSequence()
-            .filter { it.name.isNeededClassName() }
-            .map { jarFile.getInputStream(it).readBytes() }
-        scanInjectAnnotation(bytesSequence)
+        JarFile(outputJarFile).use { jarFile ->
+            val bytesSequence = jarFile.entries().asSequence()
+                .filter { it.name.isNeededClassName() }
+                .map { jarFile.getInputStream(it).readBytes() }
+            scanInjectAnnotation(bytesSequence)
+        }
     }
 
     private fun scanInjectAnnotation(bytesSequence: Sequence<ByteArray>) {
@@ -57,19 +58,16 @@ class InjectTransform : BaseTransform() {
     }
 
     private fun modifyInjects(injectImplMap: InjectImplsMap) {
-        val unzipFile = injectsJarOutputFile.unzipTo()
-        val injectsClassFile = unzipFile.walkTopDown().first {
-            it.name == "${CatInjects::class.java.simpleName}.class"
-        }
-
-        val classReader = ClassReader(injectsClassFile.readBytes())
-        val classWriter = ClassWriter(classReader, ClassWriter.COMPUTE_MAXS)
-        val visitor = InjectsVistor(classWriter, injectImplMap)
-        classReader.accept(visitor, 0)
-
-        injectsClassFile.writeBytes(classWriter.toByteArray())
-        unzipFile.zipTo()
-        unzipFile.deleteRecursively()
+        injectsJarOutputFile.writeToZip(
+            filter = { je -> je.name == "${Type.getInternalName(CatInjects::class.java)}.class" },
+            bytesTransform = { bytes ->
+                val classReader = ClassReader(bytes)
+                val classWriter = ClassWriter(classReader, ClassWriter.COMPUTE_MAXS)
+                val visitor = InjectsVistor(classWriter, injectImplMap)
+                classReader.accept(visitor, 0)
+                classWriter.toByteArray()
+            }
+        )
     }
 
     override fun onTransformed() {
