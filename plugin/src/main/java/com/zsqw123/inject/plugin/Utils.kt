@@ -1,7 +1,5 @@
 package com.zsqw123.inject.plugin
 
-import com.zsqw123.inject.CatInjects
-import org.objectweb.asm.Type
 import java.io.File
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
@@ -13,6 +11,7 @@ internal typealias InjectImplsMap = Map<String, List<String>>
 internal fun pluginLog(msg: String) = println("CatInjectTransform---->$msg")
 
 internal fun String.toClassName() = replace('/', '.')
+internal fun String.toInternalName() = replace('.', '/')
 
 internal fun String.isNeededClassName(): Boolean {
     return endsWith(".class") &&

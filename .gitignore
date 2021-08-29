@@ -15,3 +15,4 @@
 local.properties
 /.idea/
 /lib/build/
+/plugin/src/main/java/com/zsqw123/inject/plugin/test/

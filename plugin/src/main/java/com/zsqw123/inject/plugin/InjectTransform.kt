@@ -1,6 +1,7 @@
 package com.zsqw123.inject.plugin
 
 import com.zsqw123.inject.CatInjects
+import com.zsqw123.inject.InjectsUtil
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Type
@@ -46,20 +47,19 @@ class InjectTransform : BaseTransform() {
     private fun scanInjectImpls(bytesSequence: Sequence<ByteArray>) {
         bytesSequence.forEach {
             val classReader = ClassReader(it)
-            val className = classReader.className.toClassName()
+            val className = classReader.className
             val classInterfaces = classReader.interfaces
             val findedInterface = injectInterfaceInternalNames.find(classInterfaces::contains)
             if (findedInterface != null) {
-                val findedInterfaceClassName = findedInterface.toClassName()
-                pluginLog("findedInterface = [$findedInterfaceClassName], implClassName = [$className]")
-                injectImpls.add(InjectImpl(className, findedInterfaceClassName))
+                pluginLog("findedInterface = [${findedInterface.toInternalName()}], implClassName = [${className.toInternalName()}]")
+                injectImpls.add(InjectImpl(className, findedInterface))
             }
         }
     }
 
     private fun modifyInjects(injectImplMap: InjectImplsMap) {
         injectsJarOutputFile.writeToZip(
-            filter = { je -> je.name == "${Type.getInternalName(CatInjects::class.java)}.class" },
+            filter = { je -> je.name == "${Type.getInternalName(InjectsUtil::class.java)}.class" },
             bytesTransform = { bytes ->
                 val classReader = ClassReader(bytes)
                 val classWriter = ClassWriter(classReader, ClassWriter.COMPUTE_MAXS)
