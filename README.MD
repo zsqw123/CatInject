@@ -66,6 +66,8 @@ val age2user = CatInjects.getAllInstances<IUser>() // 获取全部实例, 筛选
 	.first { it.getAge() == 2 }
 ```
 
+示例：[zsqw123/CatInjectSample](https://github.com/zsqw123/CatInjectSample)
+
 ## Thanks
 
 [Gradle Transform + ASM 探索 (juejin.cn)](https://juejin.cn/post/6844904051331563528)

@@ -50,7 +50,7 @@ object ASMCodeGen {
     }
 
     // if(interfaceInternalName.equals(var1)){ genInsideMethod(); }
-    private fun MethodVisitor.genJudgeClassMethod(interfaceInternalName: String, genInsideMethod: MethodVisitor.() -> Unit) {
+    private inline fun MethodVisitor.genJudgeClassMethod(interfaceInternalName: String, genInsideMethod: MethodVisitor.() -> Unit) {
         visitVarInsn(ALOAD, 1)
         visitLdcInsn(interfaceInternalName)
         visitMethodInsn(INVOKEVIRTUAL, STRING_INTERNALNAME, "equals", "(Ljava/lang/Object;)Z", false)
@@ -61,7 +61,7 @@ object ASMCodeGen {
     }
 
     // switch(var2){ labels -> }
-    private fun MethodVisitor.genSwitchMethod(
+    private inline fun MethodVisitor.genSwitchMethod(
         defaultLabel: Label, implsInternalNames: List<String>,
         labelCallNext: (labels: Label, implName: String) -> Unit
     ) {
@@ -75,7 +75,7 @@ object ASMCodeGen {
     }
 
     // case label: return genInsideMethod();
-    private fun MethodVisitor.genLableWithReturn(label: Label, genInsideMethod: MethodVisitor.() -> Unit) {
+    private inline fun MethodVisitor.genLableWithReturn(label: Label, genInsideMethod: MethodVisitor.() -> Unit) {
         visitLabel(label)
         genInsideMethod()
         visitInsn(ARETURN)
