@@ -1,11 +1,13 @@
-package com.zsqw123.inject.plugin
+package com.zsqw123.inject.plugin.vistor
 
+import com.zsqw123.inject.plugin.Const
+import com.zsqw123.inject.plugin.pluginLog
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.Opcodes
 
 // 扫描所有被 Inject 注解的类
-class InjectClassVistor(private val interfaces: HashSet<String>, classVisitor: ClassVisitor) : ClassVisitor(Opcodes.ASM9, classVisitor) {
+class InjectClassVistor(private val interfaces: HashSet<String>, classVisitor: ClassVisitor) : ClassVisitor(Opcodes.ASM5, classVisitor) {
     private lateinit var internalName: String
     override fun visit(
         version: Int, access: Int, name: String,

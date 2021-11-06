@@ -1,12 +1,14 @@
 package com.zsqw123.inject.plugin
 
 import java.io.File
+import java.util.*
+import java.util.function.Predicate
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
 import java.util.jar.JarOutputStream
 import java.util.zip.ZipEntry
 
-internal typealias InjectImplsMap = Map<String, List<String>>
+internal typealias InjectImplsMap = MutableMap<String, List<String>>
 
 internal fun pluginLog(msg: String) = println("CatInjectTransform---->$msg")
 

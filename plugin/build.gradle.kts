@@ -17,8 +17,8 @@ dependencies {
     implementation(project(":lib"))
     implementation(fileTree("dir" to "libs", "include" to listOf("*.jar")))
 
-    implementation("org.ow2.asm:asm:9.2")
-    implementation("org.ow2.asm:asm-commons:9.2")
+//    implementation("org.ow2.asm:asm:9.2")
+//    implementation("org.ow2.asm:asm-commons:9.2")
 
     implementation("com.android.tools.build:gradle:7.0.0")
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.21")
