@@ -9,7 +9,7 @@ import org.objectweb.asm.Opcodes
 class InjectsVistor(
     classVisitor: ClassVisitor,
     private val injectImplsMap: InjectImplsMap
-) : ClassVisitor(Opcodes.ASM5, classVisitor) {
+) : ClassVisitor(Opcodes.ASM7, classVisitor) {
     override fun visitMethod(
         access: Int,
         name: String?,

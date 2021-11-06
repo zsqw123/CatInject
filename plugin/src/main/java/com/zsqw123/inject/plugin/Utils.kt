@@ -1,8 +1,7 @@
 package com.zsqw123.inject.plugin
 
 import java.io.File
-import java.util.*
-import java.util.function.Predicate
+import java.io.IOException
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
 import java.util.jar.JarOutputStream
@@ -15,12 +14,11 @@ internal fun pluginLog(msg: String) = println("CatInjectTransform---->$msg")
 internal fun String.toClassName() = replace('/', '.')
 internal fun String.toInternalName() = replace('.', '/')
 
-internal fun String.isNeededClassName(): Boolean {
-    return endsWith(".class") &&
+internal val String.isValidClassName: Boolean
+    get() = endsWith(".class") &&
         !startsWith("BuildConfig") &&
         !startsWith("R$") &&
         this != "R.class"
-}
 
 internal fun printMappedInterfaceAndImpls(map: InjectImplsMap) {
     map.forEach { (k, v) -> pluginLog("$k : $v") }
@@ -40,11 +38,14 @@ internal fun File.writeToZip(filter: (ZipEntry) -> Boolean, bytesTransform: (Byt
                         jarOut.write(ins.readBytes())
                     }
                     jarOut.closeEntry()
+                    ins.close()
                 }
             }
         }
     }
-    tmpFile.copyTo(this, true)
+    if (!deleteRecursively()) throw IOException("Delete old file failed.")
+    pluginLog("rename ${tmpFile.name} to $name")
+    tmpFile.renameTo(this)
 }
 
 internal fun JarFile.hasEntry(str: String): Boolean = use {
